@@ -4,12 +4,12 @@ import extensions
 from config import Config
 from routes.atividades import atividades_bp
 from routes.auth import auth_bp
+from routes.conta import conta_bp
 from routes.dashboard import dashboard_bp
 from routes.midias import midias_bp
 from routes.registros import registros_bp
 from routes.usuarios import usuarios_bp
 from utils import auditoria
-from routes.conta import conta_bp
 
 # Só aceita scripts, estilos, imagens e vídeos do próprio sistema.
 POLITICA_CSP = (

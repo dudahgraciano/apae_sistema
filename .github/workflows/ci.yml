@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main, refactor/organiza-app]
+  pull_request:
+    branches: [main]
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: chave-somente-para-testes
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar o Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Executar testes com cobertura
+        run: pytest --cov=routes --cov=utils --cov=app --cov=config --cov=extensions --cov-report=term-missing -v

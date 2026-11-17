@@ -1,5 +1,9 @@
 # Acervo APAE: Espírito Santo do Pinhal
 
+**MVP:** plataforma web para centralizar, organizar e consultar fotografias e vídeos das atividades da APAE, substituindo as pastas soltas do Google Drive.
+
+Sistema web para guardar, organizar e consultar fotografias e vídeos das atividades da APAE de Espírito Santo do Pinhal. Projeto de Software desenvolvido para a faculdade.
+
 Sistema web para guardar, organizar e consultar fotografias e vídeos das atividades da APAE de Espírito Santo do Pinhal. Projeto de Software desenvolvido para a faculdade.
 
 **Tecnologias:** HTML5, CSS3, JavaScript, Python (Flask) e MariaDB (XAMPP).

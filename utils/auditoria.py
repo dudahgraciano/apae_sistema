@@ -15,6 +15,7 @@ ROTULOS = {
     "usuario_editado": "Usuário editado",
     "senha_redefinida": "Senha redefinida",
     "usuario_acesso_alterado": "Acesso ativado ou desativado",
+    "senha_propria_alterada": "Alterou a própria senha",
 }
 
 
@@ -67,6 +68,10 @@ ACOES = {
     "usuarios.alternar": (
         "usuario_acesso_alterado",
         lambda r: _alvo(),
+    ),
+    "conta.minha_conta": (
+        "senha_propria_alterada",
+        lambda r: None,
     ),
 }
 

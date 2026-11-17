@@ -9,6 +9,7 @@ from routes.midias import midias_bp
 from routes.registros import registros_bp
 from routes.usuarios import usuarios_bp
 from utils import auditoria
+from routes.conta import conta_bp
 
 # Só aceita scripts, estilos, imagens e vídeos do próprio sistema.
 POLITICA_CSP = (
@@ -41,6 +42,7 @@ def criar_app():
     app.register_blueprint(midias_bp)
     app.register_blueprint(usuarios_bp)
     app.register_blueprint(registros_bp)
+    app.register_blueprint(conta_bp)
 
     auditoria.init_app(app)
 

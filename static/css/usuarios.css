@@ -158,4 +158,7 @@
     .formulario-grade-2 { grid-template-columns: 1fr; }
 
     .bloco-lateral h2 { font-size: 1.25rem; }
+
+    .menu-usuario-link { text-decoration: none; }
+.menu-usuario-link:hover { color: var(--bege); text-decoration: underline; text-underline-offset: 3px; }
 }

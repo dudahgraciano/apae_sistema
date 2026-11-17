@@ -56,7 +56,7 @@
         </nav>
 
         <div class="menu-rodape">
-            <span class="menu-usuario">{{ session.get('usuario_nome', '') }}</span>
+            <a href="{{ url_for('conta.minha_conta') }}" class="menu-usuario menu-usuario-link">{{ session.get('usuario_nome', '') }}</a>
             <form method="post" action="{{ url_for('auth.logout') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="menu-sair">Sair do sistema</button>

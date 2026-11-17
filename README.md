@@ -42,3 +42,18 @@ database/           scripts SQL
 uploads/            arquivos enviados (pasta privada, fora do Git)
 ```
 
+## Como executar
+
+1. Clone o repositório:
+   git clone https://github.com/dudahgraciano/apae_sistema.git
+   cd apae_sistema
+
+2. Crie e ative o ambiente virtual (Windows PowerShell):
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+
+3. Instale as dependências:
+   pip install -r requirements.txt
+
+4. Inicie o servidor:
+   python app.py

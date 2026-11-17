@@ -3,6 +3,8 @@ import io
 import pytest
 
 import routes.midias as midias
+import utils.decorators as decorators
+import extensions
 from utils.uploads import ErroUpload
 
 
@@ -15,6 +17,18 @@ class FakeCursor:
 
     def execute(self, *args, **kwargs):
         pass
+
+    def fetchone(self):
+        # Usado caso o decorator consulte o usuário logado no banco.
+        return {
+            "id": 1,
+            "nome": "Administrador",
+            "perfil": "administrador",
+            "ativo": 1,
+        }
+
+    def fetchall(self):
+        return []
 
 
 class FakeDB:
@@ -36,6 +50,8 @@ class FakeDB:
 def db_falso(monkeypatch):
     db = FakeDB()
     monkeypatch.setattr(midias, "get_db", lambda: db)
+    monkeypatch.setattr(decorators, "get_db", lambda: db)
+    monkeypatch.setattr(extensions, "get_db", lambda: db)
     monkeypatch.setattr(midias, "buscar_atividade", lambda cursor, id: {"id": id})
     monkeypatch.setattr(midias, "pode_alterar", lambda atividade: True)
     return db
@@ -47,6 +63,13 @@ def enviar(client, arquivos=1, autorizacao="1"):
         dados["autorizacao"] = autorizacao
     return client.post("/atividades/1/midias", data=dados,
                        content_type="multipart/form-data")
+
+
+def dados_validos():
+    return {
+        "nome_original": "foto0.jpg", "nome_arquivo": "abc123.jpg",
+        "tipo": "foto", "mime_type": "image/jpeg", "tamanho_bytes": 8,
+    }
 
 
 # ---------- Rotas protegidas (sem login) ----------
@@ -119,10 +142,7 @@ def test_erro_inesperado_nao_expoe_detalhes(client_admin, db_falso, monkeypatch)
 
 
 def test_envio_valido_registra_e_confirma_no_banco(client_admin, db_falso, monkeypatch):
-    monkeypatch.setattr(midias, "processar_arquivo", lambda arquivo, config: {
-        "nome_original": "foto0.jpg", "nome_arquivo": "abc123.jpg",
-        "tipo": "foto", "mime_type": "image/jpeg", "tamanho_bytes": 8,
-    })
+    monkeypatch.setattr(midias, "processar_arquivo", lambda arquivo, config: dados_validos())
     resposta = enviar(client_admin)
     corpo = resposta.get_json()
     assert resposta.status_code == 200
@@ -133,10 +153,7 @@ def test_envio_valido_registra_e_confirma_no_banco(client_admin, db_falso, monke
 
 def test_falha_no_banco_faz_rollback_e_apaga_arquivo(client_admin, db_falso, monkeypatch):
     apagados = []
-    monkeypatch.setattr(midias, "processar_arquivo", lambda arquivo, config: {
-        "nome_original": "foto0.jpg", "nome_arquivo": "abc123.jpg",
-        "tipo": "foto", "mime_type": "image/jpeg", "tamanho_bytes": 8,
-    })
+    monkeypatch.setattr(midias, "processar_arquivo", lambda arquivo, config: dados_validos())
     monkeypatch.setattr(midias, "apagar_arquivos",
                         lambda config, nomes: apagados.extend(nomes))
 

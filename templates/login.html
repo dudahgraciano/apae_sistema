@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar · APAE Espírito Santo do Pinhal</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body class="pagina-login">
+
+    <section class="login-marca">
+        <div class="login-marca-topo">APAE · Espírito Santo do Pinhal</div>
+        <div class="login-marca-centro">
+            <h1>Acervo</h1>
+            <p>Fotografias e vídeos das atividades, reunidos num só lugar.</p>
+        </div>
+        <div class="login-marca-rodape">Uso restrito aos colaboradores autorizados.</div>
+    </section>
+
+    <section class="login-formulario">
+        <div class="login-caixa">
+            <h2>Entrar</h2>
+            <p class="login-intro">Use o e-mail e a senha que a coordenação cadastrou para você.</p>
+
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+                {% if mensagens %}
+                    <div class="mensagens" role="alert">
+                        {% for categoria, texto in mensagens %}
+                            <div class="mensagem mensagem-{{ categoria }}">{{ texto }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="post" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="campo">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" value="{{ email or '' }}"
+                           autocomplete="username" required autofocus>
+                </div>
+
+                <div class="campo">
+                    <label for="senha">Senha</label>
+                    <div class="campo-senha">
+                        <input type="password" id="senha" name="senha"
+                               autocomplete="current-password" required>
+                        <button type="button" class="ver-senha" id="verSenha"
+                                aria-label="Mostrar senha" aria-pressed="false">Mostrar</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="botao botao-principal botao-largo">Entrar</button>
+            </form>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

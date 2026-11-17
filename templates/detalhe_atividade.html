@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ atividade.nome }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/atividades.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+    <header class="cabecalho-pagina cabecalho-com-acao">
+        <div>
+            <p class="sobretitulo">{{ atividade.categoria }}</p>
+            <h1>{{ atividade.nome }}</h1>
+            <p class="subtitulo">{{ atividade.turma }} · {{ atividade.data_realizacao.strftime('%d/%m/%Y') }}</p>
+        </div>
+        {% if pode_alterar %}
+            <div class="cabecalho-botoes">
+                <a href="{{ url_for('atividades.editar', atividade_id=atividade.id) }}" class="botao">Editar</a>
+                <form method="post" action="{{ url_for('atividades.excluir', atividade_id=atividade.id) }}"
+                      class="form-excluir" data-confirmar="Excluir a atividade &quot;{{ atividade.nome }}&quot; e todos os seus arquivos? Esta ação não pode ser desfeita.">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="botao botao-perigo">Excluir</button>
+                </form>
+            </div>
+        {% endif %}
+    </header>
+
+    <section class="detalhes">
+        <div class="detalhe-bloco">
+            <h2>Descrição</h2>
+            {% if atividade.descricao %}
+                <p class="descricao-texto">{{ atividade.descricao }}</p>
+            {% else %}
+                <p class="texto-suave">Nenhuma descrição foi informada.</p>
+            {% endif %}
+        </div>
+
+        <dl class="detalhe-dados">
+            <div>
+                <dt>Turma ou grupo</dt>
+                <dd>{{ atividade.turma }}</dd>
+            </div>
+            <div>
+                <dt>Categoria</dt>
+                <dd>{{ atividade.categoria }}</dd>
+            </div>
+            <div>
+                <dt>Data de realização</dt>
+                <dd>{{ atividade.data_realizacao.strftime('%d/%m/%Y') }}</dd>
+            </div>
+            <div>
+                <dt>Cadastrada por</dt>
+                <dd>{{ atividade.responsavel }}</dd>
+            </div>
+            <div>
+                <dt>Cadastrada em</dt>
+                <dd>{{ atividade.criado_em.strftime('%d/%m/%Y às %H:%M') }}</dd>
+            </div>
+            <div>
+                <dt>Arquivos</dt>
+                <dd>
+                    {{ total_fotos }} {{ 'fotografia' if total_fotos == 1 else 'fotografias' }} ·
+                    {{ total_videos }} {{ 'vídeo' if total_videos == 1 else 'vídeos' }}
+                </dd>
+            </div>
+        </dl>
+    </section>
+
+    {% if pode_alterar %}
+    <section class="envio">
+        <h2>Adicionar fotografias e vídeos</h2>
+
+        <form id="formEnvio" class="envio-form"
+              action="{{ url_for('midias.enviar', atividade_id=atividade.id) }}" method="post"
+              enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label class="envio-area" for="arquivos" id="areaEnvio">
+                <span class="envio-titulo">Clique aqui para escolher os arquivos</span>
+                <span class="envio-dica">ou arraste-os para esta área. Você pode escolher vários de uma vez.</span>
+                <span class="envio-dica">Fotografias (JPG, PNG, WEBP) até 15 MB · Vídeos (MP4, MOV, WEBM) até 300 MB</span>
+            </label>
+            <input type="file" id="arquivos" name="arquivos" multiple class="envio-input"
+                   accept=".jpg,.jpeg,.png,.webp,.mp4,.mov,.webm">
+
+            <ul class="envio-lista" id="listaEnvio" aria-live="polite"></ul>
+
+            <div class="progresso" id="progresso" hidden>
+                <div class="progresso-barra"><div class="progresso-preenchimento" id="progressoBarra"></div></div>
+                <span class="progresso-texto" id="progressoTexto">0%</span>
+            </div>
+
+            <div class="envio-mensagem" id="envioMensagem" role="status" hidden></div>
+
+                       <label class="autorizacao">
+                <input type="checkbox" id="autorizacao" name="autorizacao" value="1">
+                <span>Confirmo que existe autorização de uso de imagem dos alunos que aparecem nestes arquivos.</span>
+            </label>
+
+            <button type="submit" class="botao botao-principal" id="botaoEnviar" disabled>Enviar arquivos</button>
+        </form>
+    </section>
+    {% endif %}
+
+    <section class="detalhe-midias">
+        <h2>Fotografias e vídeos</h2>
+
+        {% if midias %}
+            <ul class="grade-midias">
+                {% for m in midias %}
+                    <li class="midia">
+                        <a href="{{ url_for('midias.arquivo', midia_id=m.id) }}" target="_blank" rel="noopener"
+                           class="midia-link" title="{{ m.nome_original }}">
+                            {% if m.tipo == 'foto' %}
+                                <img src="{{ url_for('midias.miniatura', midia_id=m.id) }}"
+                                     alt="Fotografia: {{ m.nome_original }}" loading="lazy">
+                            {% else %}
+                                <span class="midia-video">
+                                    <span class="midia-video-icone" aria-hidden="true">▶</span>
+                                    <span>Vídeo</span>
+                                </span>
+                            {% endif %}
+                        </a>
+                        <div class="midia-info">
+                            <span class="midia-nome">{{ m.nome_original }}</span>
+                            <span class="midia-acoes">
+                                <a href="{{ url_for('midias.baixar', midia_id=m.id) }}">Baixar</a>
+                                {% if pode_alterar %}
+                                    <form method="post" action="{{ url_for('midias.excluir', midia_id=m.id) }}"
+                                          class="form-excluir"
+                                          data-confirmar="Excluir este arquivo? Esta ação não pode ser desfeita.">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="link-perigo">Excluir</button>
+                                    </form>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="vazio">
+                <p>Ainda não há arquivos nesta atividade.</p>
+                {% if pode_alterar %}
+                    <p class="vazio-dica">Use a área acima para enviar fotografias e vídeos.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+
+    <p class="voltar"><a href="{{ url_for('atividades.listar') }}">← Voltar para a lista de atividades</a></p>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ url_for('static', filename='js/atividades.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

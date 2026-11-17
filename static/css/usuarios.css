@@ -1,0 +1,161 @@
+/* ---------- Lista ---------- */
+
+.lista-usuarios {
+    margin: 0 0 3rem;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--verde-suave);
+}
+
+.linha-usuario {
+    display: grid;
+    grid-template-columns: 1fr 9rem 9rem auto;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--linha);
+}
+
+.linha-usuario.inativo .usuario-nome,
+.linha-usuario.inativo .usuario-email,
+.linha-usuario.inativo .usuario-perfil { opacity: 0.55; }
+
+.usuario-nome {
+    display: block;
+    font-family: var(--fonte-titulo);
+    font-size: 1.2rem;
+}
+
+.usuario-voce {
+    margin-left: 0.5rem;
+    padding: 0.05rem 0.45rem;
+    border: 1px solid var(--verde-suave);
+    border-radius: var(--raio);
+    font-family: var(--fonte-texto);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--verde);
+    vertical-align: middle;
+}
+
+.usuario-email {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.88rem;
+    color: var(--texto-suave);
+    overflow-wrap: anywhere;
+}
+
+.usuario-perfil { font-size: 0.92rem; }
+
+.situacao {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.situacao-ativa { color: var(--verde); }
+.situacao-inativa { color: var(--erro); }
+
+.usuario-atividades {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--texto-suave);
+}
+
+.usuario-acoes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.25rem;
+    font-size: 0.9rem;
+}
+
+.usuario-acoes form { margin: 0; }
+
+.link-acao {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--verde);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+/* ---------- Explicação dos perfis ---------- */
+
+.perfis-explicacao h2 { margin-bottom: 1rem; font-size: 1.4rem; }
+
+.perfis-explicacao dl {
+    margin: 0;
+    border-top: 1px solid var(--verde-suave);
+}
+
+.perfis-explicacao dl div {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: 1.5rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--linha);
+}
+
+.perfis-explicacao dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--verde);
+}
+
+.perfis-explicacao dd { margin: 0; color: var(--texto-suave); }
+
+/* ---------- Formulário ---------- */
+
+.formulario-grade-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.5rem;
+}
+
+.campo-dica {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--texto-suave);
+}
+
+.campo select:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.bloco-lateral {
+    max-width: 760px;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--linha);
+}
+
+.bloco-lateral h2 { margin-bottom: 0.5rem; font-size: 1.4rem; }
+.bloco-lateral .texto-suave { margin-bottom: 1.25rem; }
+.bloco-lateral form { margin: 0; }
+
+/* ---------- Telas pequenas ---------- */
+
+@media (max-width: 860px) {
+    .linha-usuario {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+
+    .usuario-acoes { justify-content: flex-start; }
+
+    .perfis-explicacao dl div {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+
+    .formulario-grade-2 { grid-template-columns: 1fr; }
+
+    .bloco-lateral h2 { font-size: 1.25rem; }
+}

@@ -1,0 +1,66 @@
+.pagina-login {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+}
+
+.login-marca {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem;
+    background: var(--verde);
+    color: var(--bege);
+}
+
+.login-marca-topo {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--verde-suave);
+}
+
+.login-marca-centro h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    margin-bottom: 1rem;
+}
+
+.login-marca-centro p {
+    max-width: 22rem;
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--verde-suave);
+}
+
+.login-marca-rodape {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(168, 200, 184, 0.35);
+    font-size: 0.85rem;
+    color: var(--verde-suave);
+}
+
+.login-formulario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.login-caixa { width: 100%; max-width: 380px; }
+
+.login-caixa h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+
+.login-intro {
+    margin: 0 0 2rem;
+    color: var(--texto-suave);
+}
+
+@media (max-width: 860px) {
+    .pagina-login { grid-template-columns: 1fr; }
+
+    .login-marca { padding: 1.75rem 1.5rem; gap: 1.5rem; }
+    .login-marca-centro h1 { font-size: 2.6rem; }
+    .login-marca-rodape { display: none; }
+
+    .login-formulario { align-items: flex-start; padding: 2rem 1.5rem; }
+}

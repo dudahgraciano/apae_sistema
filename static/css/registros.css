@@ -1,0 +1,38 @@
+.registros-caixa {
+    overflow-x: auto;
+    border-top: 1px solid var(--verde-suave);
+}
+
+.registros-tabela {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.registros-tabela th {
+    padding: 0.8rem 1rem 0.8rem 0;
+    border-bottom: 1px solid var(--linha);
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--verde);
+}
+
+.registros-tabela td {
+    padding: 0.8rem 1rem 0.8rem 0;
+    border-bottom: 1px solid var(--linha);
+    vertical-align: top;
+}
+
+.registro-data {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: var(--texto-suave);
+}
+
+.registro-detalhe { overflow-wrap: anywhere; }
+.registro-falha { color: var(--erro); font-weight: 600; }
+.registro-ip { white-space: nowrap; color: var(--texto-suave); }

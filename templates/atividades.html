@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block titulo %}Atividades{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/atividades.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+    <header class="cabecalho-pagina cabecalho-com-acao">
+        <div>
+            <p class="sobretitulo">Atividades</p>
+            <h1>Atividades cadastradas</h1>
+            <p class="subtitulo">
+                {{ total }} {{ 'atividade encontrada' if total == 1 else 'atividades encontradas' }}.
+            </p>
+        </div>
+        {% if session.get('perfil') in ('administrador', 'colaborador') %}
+            <a href="{{ url_for('atividades.nova') }}" class="botao botao-principal">Nova atividade</a>
+        {% endif %}
+    </header>
+
+    <form method="get" class="filtros" action="{{ url_for('atividades.listar') }}">
+        <div class="filtros-linha">
+            <div class="campo campo-busca">
+                <label for="busca">Buscar pelo nome</label>
+                <input type="search" id="busca" name="busca" value="{{ filtros.busca }}"
+                       placeholder="Ex.: festa junina">
+            </div>
+            <div class="campo">
+                <label for="turma">Turma</label>
+                <select id="turma" name="turma">
+                    <option value="">Todas</option>
+                    {% for t in turmas %}
+                        <option value="{{ t.id }}" {% if filtros.turma == t.id|string %}selected{% endif %}>{{ t.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="campo">
+                <label for="categoria">Categoria</label>
+                <select id="categoria" name="categoria">
+                    <option value="">Todas</option>
+                    {% for c in categorias %}
+                        <option value="{{ c.id }}" {% if filtros.categoria == c.id|string %}selected{% endif %}>{{ c.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="filtros-linha">
+            <div class="campo">
+                <label for="de">Realizada a partir de</label>
+                <input type="date" id="de" name="de" value="{{ filtros.de }}">
+            </div>
+            <div class="campo">
+                <label for="ate">Realizada até</label>
+                <input type="date" id="ate" name="ate" value="{{ filtros.ate }}">
+            </div>
+            <div class="filtros-botoes">
+                <button type="submit" class="botao botao-principal">Buscar</button>
+                {% if filtros_ativos %}
+                    <a href="{{ url_for('atividades.listar') }}" class="botao">Limpar filtros</a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+    {% if atividades %}
+        <ul class="lista-atividades">
+            {% for a in atividades %}
+                <li class="linha-atividade">
+                    <div class="linha-data">{{ a.data_realizacao.strftime('%d/%m/%Y') }}</div>
+                    <div class="linha-corpo">
+                        <a href="{{ url_for('atividades.detalhe', atividade_id=a.id) }}" class="linha-nome">{{ a.nome }}</a>
+                        <span class="linha-meta">{{ a.turma }} · {{ a.categoria }}</span>
+                    </div>
+                    <div class="linha-midias">
+                        {{ a.total_midias }} {{ 'arquivo' if a.total_midias == 1 else 'arquivos' }}
+                    </div>
+                    <div class="linha-acoes">
+                        <a href="{{ url_for('atividades.detalhe', atividade_id=a.id) }}">Abrir</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if total_paginas > 1 %}
+            <nav class="paginacao" aria-label="Páginas">
+                {% set params = {'busca': filtros.busca, 'turma': filtros.turma, 'categoria': filtros.categoria, 'de': filtros.de, 'ate': filtros.ate} %}
+                {% if pagina > 1 %}
+                    <a href="{{ url_for('atividades.listar', pagina=pagina - 1, **params) }}">← Anterior</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+                <span>Página {{ pagina }} de {{ total_paginas }}</span>
+                {% if pagina < total_paginas %}
+                    <a href="{{ url_for('atividades.listar', pagina=pagina + 1, **params) }}">Próxima →</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="vazio">
+            {% if filtros_ativos %}
+                <p>Nenhuma atividade encontrada com esses filtros.</p>
+                <p class="vazio-dica">Tente buscar por outro nome ou clique em "Limpar filtros".</p>
+            {% else %}
+                <p>Nenhuma atividade foi cadastrada ainda.</p>
+                {% if session.get('perfil') in ('administrador', 'colaborador') %}
+                    <p class="vazio-dica">Clique em "Nova atividade" para começar.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

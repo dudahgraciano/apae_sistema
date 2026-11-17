@@ -1,0 +1,244 @@
+[hidden] { display: none !important; }
+
+/* ---------- Filtros ---------- */
+
+.filtros-galeria .filtros-botoes { margin-top: 0.25rem; margin-bottom: 0; }
+
+/* ---------- Grade editorial ---------- */
+
+.g-grade {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 11rem;
+    grid-auto-flow: dense;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.g-item { margin: 0; min-height: 0; }
+
+/* A cada 9 arquivos, um fica maior: dá ritmo à grade sem poluir. */
+.g-item:nth-child(9n + 1) {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.g-botao {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: var(--raio);
+    background: var(--linha);
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.g-botao img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.g-botao:hover img { transform: scale(1.03); }
+
+.g-video {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+    height: 100%;
+    background: var(--verde);
+    color: var(--bege);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.g-video-icone { font-size: 2rem; line-height: 1; color: var(--verde-suave); }
+
+.g-legenda {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.45rem 0.65rem;
+    background: rgba(35, 72, 63, 0.88);
+    color: var(--bege);
+    font-size: 0.78rem;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.g-botao:hover .g-legenda,
+.g-botao:focus-visible .g-legenda {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.g-legenda-nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.g-legenda-data { white-space: nowrap; color: var(--verde-suave); }
+
+/* ---------- Estado vazio ---------- */
+
+.vazio {
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--verde-suave);
+    color: var(--texto-suave);
+}
+
+.vazio p { margin: 0; }
+.vazio-dica { margin-top: 0.4rem !important; font-size: 0.9rem; }
+
+/* ---------- Visualizador em tela cheia ---------- */
+
+body.lb-aberto { overflow: hidden; }
+
+.lb {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    grid-template-columns: 4.5rem 1fr 4.5rem;
+    grid-template-rows: auto 1fr auto;
+    background: #15231f;
+    color: var(--bege);
+}
+
+.lb-fechar {
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin: 1rem 1.25rem 0.5rem;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--verde-suave);
+    border-radius: var(--raio);
+    background: transparent;
+    color: var(--bege);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.lb-fechar:hover { background: rgba(168, 200, 184, 0.18); }
+
+.lb-seta {
+    align-self: center;
+    justify-self: center;
+    width: 3rem;
+    height: 3rem;
+    border: 0;
+    border-radius: var(--raio);
+    background: transparent;
+    color: var(--bege);
+    font-size: 2.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.lb-seta:hover:not(:disabled) { background: rgba(168, 200, 184, 0.18); }
+.lb-seta:disabled { opacity: 0.25; cursor: default; }
+.lb-ant { grid-column: 1; grid-row: 2; }
+.lb-prox { grid-column: 3; grid-row: 2; }
+
+.lb-palco {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    min-width: 0;
+}
+
+.lb-palco img,
+.lb-palco video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+
+.lb-info {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding: 1rem 1.5rem 1.25rem;
+    border-top: 1px solid rgba(168, 200, 184, 0.3);
+}
+
+.lb-texto { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+
+.lb-contador {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--verde-suave);
+}
+
+.lb-atividade { font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 500; }
+.lb-meta { font-size: 0.9rem; color: var(--verde-suave); }
+.lb-nome { font-size: 0.8rem; color: rgba(247, 244, 236, 0.6); overflow-wrap: anywhere; }
+
+.lb-acoes { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.lb-acoes form { margin: 0; }
+
+.lb-link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--bege);
+    font: inherit;
+    font-size: 0.95rem;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+}
+
+.lb-link:hover { color: var(--verde-suave); }
+.lb-excluir { color: #e9b3ab; }
+.lb-excluir:hover { color: #f6d3ce; }
+
+/* ---------- Telas pequenas ---------- */
+
+@media (max-width: 1100px) {
+    .g-grade { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 860px) {
+    .g-grade {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 9rem;
+    }
+
+    .g-item:nth-child(9n + 1) { grid-column: span 2; grid-row: span 1; }
+
+    /* No celular não há "passar o mouse": a legenda fica sempre visível. */
+    .g-legenda { opacity: 1; transform: none; }
+
+    .lb { grid-template-columns: 2.75rem 1fr 2.75rem; }
+    .lb-seta { width: 2.5rem; font-size: 2rem; }
+    .lb-info { padding: 0.75rem 1rem 1rem; }
+    .lb-nome { display: none; }
+}

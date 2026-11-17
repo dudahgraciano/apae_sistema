@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ titulo }} · APAE Espírito Santo do Pinhal</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="pagina-erro">
+    <main class="erro-caixa">
+        <p class="erro-codigo">{{ codigo }}</p>
+        <h1>{{ titulo }}</h1>
+        <p>{{ mensagem }}</p>
+        <a href="{{ url_for('auth.inicio') }}" class="botao botao-principal">Voltar ao início</a>
+    </main>
+</body>
+</html>

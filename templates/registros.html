@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block titulo %}Registros{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/atividades.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registros.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+    <header class="cabecalho-pagina">
+        <p class="sobretitulo">Administração</p>
+        <h1>Registro de ações</h1>
+        <p class="subtitulo">
+            {{ total }} {{ 'registro encontrado' if total == 1 else 'registros encontrados' }}.
+            Aqui ficam as ações importantes feitas no sistema, da mais recente para a mais antiga.
+        </p>
+    </header>
+
+    <form method="get" class="filtros" action="{{ url_for('registros.listar') }}">
+        <div class="filtros-linha">
+            <div class="campo">
+                <label for="acao">Tipo de ação</label>
+                <select id="acao" name="acao">
+                    <option value="">Todas as ações</option>
+                    {% for chave, rotulo in rotulos.items() %}
+                        <option value="{{ chave }}" {% if acao == chave %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filtros-botoes">
+                <button type="submit" class="botao botao-principal">Filtrar</button>
+                {% if acao %}
+                    <a href="{{ url_for('registros.listar') }}" class="botao">Limpar filtro</a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+    {% if registros %}
+        <div class="registros-caixa">
+            <table class="registros-tabela">
+                <thead>
+                    <tr>
+                        <th>Data e hora</th>
+                        <th>Pessoa</th>
+                        <th>Ação</th>
+                        <th>Detalhe</th>
+                        <th>Endereço de rede</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in registros %}
+                        <tr>
+                            <td class="registro-data">{{ r.criado_em.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                            <td>{{ r.usuario_nome or '—' }}</td>
+                            <td class="{{ 'registro-falha' if r.acao == 'login_falha' else '' }}">
+                                {{ rotulos.get(r.acao, r.acao) }}
+                            </td>
+                            <td class="registro-detalhe">{{ r.detalhe or '—' }}</td>
+                            <td class="registro-ip">{{ r.ip or '—' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total_paginas > 1 %}
+            <nav class="paginacao" aria-label="Páginas">
+                {% if pagina > 1 %}
+                    <a href="{{ url_for('registros.listar', pagina=pagina - 1, acao=acao) }}">← Anterior</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+                <span>Página {{ pagina }} de {{ total_paginas }}</span>
+                {% if pagina < total_paginas %}
+                    <a href="{{ url_for('registros.listar', pagina=pagina + 1, acao=acao) }}">Próxima →</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="vazio">
+            <p>Nenhum registro encontrado.</p>
+        </div>
+    {% endif %}
+{% endblock %}

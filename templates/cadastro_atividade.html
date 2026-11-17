@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ 'Editar atividade' if editando else 'Nova atividade' }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/atividades.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+    <header class="cabecalho-pagina">
+        <p class="sobretitulo">{{ 'Edição' if editando else 'Cadastro' }}</p>
+        <h1>{{ 'Editar atividade' if editando else 'Nova atividade' }}</h1>
+        <p class="subtitulo">
+            {% if editando %}
+                Altere o que for necessário e clique em "Salvar alterações".
+            {% else %}
+                Preencha os dados da atividade. Depois de cadastrar, você poderá enviar as fotografias e os vídeos.
+            {% endif %}
+        </p>
+    </header>
+
+    <form method="post" class="formulario" novalidate
+          action="{{ url_for('atividades.editar', atividade_id=atividade.id) if editando else url_for('atividades.nova') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="campo">
+            <label for="nome">Nome da atividade</label>
+            <input type="text" id="nome" name="nome" maxlength="150" required autofocus
+                   value="{{ atividade.nome or '' }}" placeholder="Ex.: Festa junina 2026">
+        </div>
+
+        <div class="formulario-grade">
+            <div class="campo">
+                <label for="data_realizacao">Data em que foi realizada</label>
+                <input type="date" id="data_realizacao" name="data_realizacao" required
+                       max="{{ hoje }}" value="{{ atividade.data_realizacao or '' }}">
+            </div>
+
+            <div class="campo">
+                <label for="turma_id">Turma ou grupo</label>
+                <select id="turma_id" name="turma_id" required>
+                    <option value="">Escolha a turma</option>
+                    {% for t in turmas %}
+                        <option value="{{ t.id }}" {% if atividade.turma_id|string == t.id|string %}selected{% endif %}>{{ t.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="categoria_id">Categoria</label>
+                <select id="categoria_id" name="categoria_id" required>
+                    <option value="">Escolha a categoria</option>
+                    {% for c in categorias %}
+                        <option value="{{ c.id }}" {% if atividade.categoria_id|string == c.id|string %}selected{% endif %}>{{ c.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="campo">
+            <label for="descricao">Descrição <span class="opcional">(opcional)</span></label>
+            <textarea id="descricao" name="descricao" rows="5" maxlength="3000"
+                      placeholder="Conte brevemente o que foi feito nesta atividade.">{{ atividade.descricao or '' }}</textarea>
+            <span class="contador" id="contador" aria-live="polite"></span>
+        </div>
+
+        <p class="aviso-lgpd">
+            Antes de enviar fotografias e vídeos, confirme que existe autorização de uso de imagem
+            dos alunos que aparecem nos registros.
+        </p>
+
+        <div class="formulario-acoes">
+            <button type="submit" class="botao botao-principal">
+                {{ 'Salvar alterações' if editando else 'Cadastrar atividade' }}
+            </button>
+            <a href="{{ url_for('atividades.detalhe', atividade_id=atividade.id) if editando else url_for('atividades.listar') }}"
+               class="botao">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ url_for('static', filename='js/atividades.js') }}"></script>
+{% endblock %}

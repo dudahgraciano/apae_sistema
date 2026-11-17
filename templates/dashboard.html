@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block titulo %}Início{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+    <header class="cabecalho-pagina">
+        <p class="sobretitulo">Início</p>
+        <h1>Olá, {{ session.get('usuario_nome', '').split(' ')[0] }}.</h1>
+        <p class="subtitulo">Aqui você encontra o resumo do acervo e pode seguir para o que precisa fazer.</p>
+    </header>
+
+    <section class="totais" aria-label="Resumo do acervo">
+        <div class="total">
+            <span class="total-numero">{{ total_atividades }}</span>
+            <span class="total-rotulo">{{ 'atividade cadastrada' if total_atividades == 1 else 'atividades cadastradas' }}</span>
+        </div>
+        <div class="total">
+            <span class="total-numero">{{ total_fotos }}</span>
+            <span class="total-rotulo">{{ 'fotografia' if total_fotos == 1 else 'fotografias' }}</span>
+        </div>
+        <div class="total">
+            <span class="total-numero">{{ total_videos }}</span>
+            <span class="total-rotulo">{{ 'vídeo' if total_videos == 1 else 'vídeos' }}</span>
+        </div>
+    </section>
+
+        <section class="atalhos" aria-label="Atalhos">
+        {% if session.get('perfil') in ('administrador', 'colaborador') %}
+            <a href="{{ url_for('atividades.nova') }}" class="botao botao-principal">Cadastrar nova atividade</a>
+        {% endif %}
+        <a href="{{ url_for('midias.galeria') }}" class="botao">Consultar a galeria</a>
+        <a href="{{ url_for('atividades.listar') }}" class="botao">Ver atividades cadastradas</a>
+    </section>
+
+    <section class="recentes">
+        <h2>Adicionadas recentemente</h2>
+
+        {% if recentes %}
+            <ul class="lista-recentes">
+                {% for a in recentes %}
+                    <li class="item-recente">
+                        <div class="item-recente-data">{{ a.data_realizacao.strftime('%d/%m/%Y') }}</div>
+                        <div class="item-recente-corpo">
+                            <a href="{{ url_for('atividades.detalhe', atividade_id=a.id) }}" class="item-recente-nome">{{ a.nome }}</a>
+                            <span class="item-recente-meta">{{ a.turma }} · {{ a.categoria }}</span>
+                        </div>
+                        <div class="item-recente-midias">
+                            {{ a.total_midias }} {{ 'arquivo' if a.total_midias == 1 else 'arquivos' }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="vazio">
+                <p>Nenhuma atividade foi cadastrada ainda.</p>
+                {% if session.get('perfil') in ('administrador', 'colaborador') %}
+                    <p class="vazio-dica">Clique em "Cadastrar nova atividade" para começar.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block titulo %}Usuários{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/atividades.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+    <header class="cabecalho-pagina cabecalho-com-acao">
+        <div>
+            <p class="sobretitulo">Administração</p>
+            <h1>Usuários</h1>
+            <p class="subtitulo">
+                {{ usuarios|length }} {{ 'pessoa cadastrada' if usuarios|length == 1 else 'pessoas cadastradas' }}.
+            </p>
+        </div>
+        <a href="{{ url_for('usuarios.novo') }}" class="botao botao-principal">Novo usuário</a>
+    </header>
+
+    <ul class="lista-usuarios">
+        {% for u in usuarios %}
+            <li class="linha-usuario {% if not u.ativo %}inativo{% endif %}">
+                <div class="usuario-principal">
+                    <span class="usuario-nome">
+                        {{ u.nome }}
+                        {% if u.id == usuario_atual %}<span class="usuario-voce">você</span>{% endif %}
+                    </span>
+                    <span class="usuario-email">{{ u.email }}</span>
+                </div>
+                <div class="usuario-perfil">{{ perfis[u.perfil] }}</div>
+                <div class="usuario-situacao">
+                    <span class="situacao {{ 'situacao-ativa' if u.ativo else 'situacao-inativa' }}">
+                        {{ 'Ativo' if u.ativo else 'Desativado' }}
+                    </span>
+                    <span class="usuario-atividades">
+                        {{ u.total_atividades }} {{ 'atividade' if u.total_atividades == 1 else 'atividades' }}
+                    </span>
+                </div>
+                <div class="usuario-acoes">
+                    <a href="{{ url_for('usuarios.editar', usuario_id=u.id) }}">Editar</a>
+                    {% if u.id != usuario_atual %}
+                        {% if u.ativo %}
+                            <form method="post" action="{{ url_for('usuarios.alternar', usuario_id=u.id) }}"
+                                  class="form-excluir"
+                                  data-confirmar="Desativar o acesso de &quot;{{ u.nome }}&quot;? A pessoa deixará de entrar no sistema, mas as atividades cadastradas por ela continuam no acervo.">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="link-perigo">Desativar</button>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{{ url_for('usuarios.alternar', usuario_id=u.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="link-acao">Reativar</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <section class="perfis-explicacao">
+        <h2>O que cada perfil pode fazer</h2>
+        <dl>
+            <div>
+                <dt>Administrador</dt>
+                <dd>Tudo: gerencia usuários e edita ou exclui qualquer atividade e arquivo.</dd>
+            </div>
+            <div>
+                <dt>Colaborador</dt>
+                <dd>Cadastra atividades, envia fotografias e vídeos, e edita ou exclui apenas o que ele mesmo cadastrou.</dd>
+            </div>
+            <div>
+                <dt>Visualizador</dt>
+                <dd>Só consulta a galeria e as atividades, sem alterar nada. Indicado para quem apenas busca material para divulgação.</dd>
+            </div>
+        </dl>
+    </section>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ url_for('static', filename='js/atividades.js') }}"></script>
+{% endblock %}

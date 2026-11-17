@@ -1,0 +1,18 @@
+# Ambiente virtual
+venv/
+
+# Segredos
+.env
+
+# Arquivos enviados (imagens de alunos: dados sensíveis)
+uploads/*
+!uploads/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor / sistema
+.vscode/
+.DS_Store
+Thumbs.db

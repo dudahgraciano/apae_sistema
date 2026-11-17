@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block titulo %}Galeria{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/atividades.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/galeria.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+    <header class="cabecalho-pagina">
+        <p class="sobretitulo">Galeria</p>
+        <h1>Fotografias e vídeos</h1>
+        <p class="subtitulo">
+            {{ total }} {{ 'arquivo encontrado' if total == 1 else 'arquivos encontrados' }}.
+        </p>
+    </header>
+
+    <form method="get" class="filtros filtros-galeria" action="{{ url_for('midias.galeria') }}">
+        <div class="filtros-linha">
+            <div class="campo">
+                <label for="busca">Buscar pelo nome da atividade ou do arquivo</label>
+                <input type="search" id="busca" name="busca" value="{{ filtros.busca }}"
+                       placeholder="Ex.: festa junina">
+            </div>
+            <div class="campo">
+                <label for="turma">Turma</label>
+                <select id="turma" name="turma">
+                    <option value="">Todas</option>
+                    {% for t in turmas %}
+                        <option value="{{ t.id }}" {% if filtros.turma == t.id|string %}selected{% endif %}>{{ t.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="campo">
+                <label for="categoria">Categoria</label>
+                <select id="categoria" name="categoria">
+                    <option value="">Todas</option>
+                    {% for c in categorias %}
+                        <option value="{{ c.id }}" {% if filtros.categoria == c.id|string %}selected{% endif %}>{{ c.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="filtros-linha">
+            <div class="campo">
+                <label for="tipo">Tipo de arquivo</label>
+                <select id="tipo" name="tipo">
+                    <option value="">Fotografias e vídeos</option>
+                    <option value="foto" {% if filtros.tipo == 'foto' %}selected{% endif %}>Só fotografias</option>
+                    <option value="video" {% if filtros.tipo == 'video' %}selected{% endif %}>Só vídeos</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="de">Atividade realizada a partir de</label>
+                <input type="date" id="de" name="de" value="{{ filtros.de }}">
+            </div>
+            <div class="campo">
+                <label for="ate">Atividade realizada até</label>
+                <input type="date" id="ate" name="ate" value="{{ filtros.ate }}">
+            </div>
+        </div>
+        <div class="filtros-botoes">
+            <button type="submit" class="botao botao-principal">Buscar</button>
+            {% if filtros_ativos %}
+                <a href="{{ url_for('midias.galeria') }}" class="botao">Limpar filtros</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if midias %}
+        <ul class="g-grade">
+            {% for m in midias %}
+                <li class="g-item">
+                    <button type="button" class="g-botao"
+                            data-tipo="{{ m.tipo }}"
+                            data-arquivo="{{ url_for('midias.arquivo', midia_id=m.id) }}"
+                            data-baixar="{{ url_for('midias.baixar', midia_id=m.id) }}"
+                            data-nome="{{ m.nome_original }}"
+                            data-atividade="{{ m.atividade }}"
+                            data-atividade-url="{{ url_for('atividades.detalhe', atividade_id=m.atividade_id) }}"
+                            data-meta="{{ m.turma }} · {{ m.categoria }} · {{ m.data_realizacao.strftime('%d/%m/%Y') }}"
+                            data-excluir="{{ url_for('midias.excluir', midia_id=m.id) if m.pode else '' }}"
+                            aria-label="Abrir {{ 'fotografia' if m.tipo == 'foto' else 'vídeo' }} da atividade {{ m.atividade }}">
+                        {% if m.tipo == 'foto' %}
+                            <img src="{{ url_for('midias.miniatura', midia_id=m.id) }}" alt="" loading="lazy">
+                        {% else %}
+                            <span class="g-video"><span class="g-video-icone" aria-hidden="true">▶</span>Vídeo</span>
+                        {% endif %}
+                        <span class="g-legenda">
+                            <span class="g-legenda-nome">{{ m.atividade }}</span>
+                            <span class="g-legenda-data">{{ m.data_realizacao.strftime('%d/%m/%Y') }}</span>
+                        </span>
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if total_paginas > 1 %}
+            <nav class="paginacao" aria-label="Páginas">
+                {% set params = {'busca': filtros.busca, 'turma': filtros.turma, 'categoria': filtros.categoria, 'tipo': filtros.tipo, 'de': filtros.de, 'ate': filtros.ate} %}
+                {% if pagina > 1 %}
+                    <a href="{{ url_for('midias.galeria', pagina=pagina - 1, **params) }}">← Anterior</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+                <span>Página {{ pagina }} de {{ total_paginas }}</span>
+                {% if pagina < total_paginas %}
+                    <a href="{{ url_for('midias.galeria', pagina=pagina + 1, **params) }}">Próxima →</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="vazio">
+            {% if filtros_ativos %}
+                <p>Nenhum arquivo encontrado com esses filtros.</p>
+                <p class="vazio-dica">Tente outro nome ou clique em "Limpar filtros".</p>
+            {% else %}
+                <p>Ainda não há fotografias ou vídeos no acervo.</p>
+                <p class="vazio-dica">Eles aparecem aqui depois de enviados dentro de uma atividade.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Visualizador de arquivo" hidden>
+        <button type="button" class="lb-fechar" id="lbFechar">Fechar</button>
+        <button type="button" class="lb-seta lb-ant" id="lbAnt" aria-label="Anterior">‹</button>
+        <div class="lb-palco" id="lbPalco"></div>
+        <button type="button" class="lb-seta lb-prox" id="lbProx" aria-label="Próximo">›</button>
+        <div class="lb-info">
+            <div class="lb-texto">
+                <span class="lb-contador" id="lbContador"></span>
+                <strong class="lb-atividade" id="lbAtividade"></strong>
+                <span class="lb-meta" id="lbMeta"></span>
+                <span class="lb-nome" id="lbNome"></span>
+            </div>
+            <div class="lb-acoes">
+                <a href="#" id="lbAbrir" class="lb-link">Abrir atividade</a>
+                <a href="#" id="lbBaixar" class="lb-link">Baixar</a>
+                <form method="post" id="lbExcluir" hidden>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="voltar" value="galeria">
+                    <button type="submit" class="lb-link lb-excluir">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ url_for('static', filename='js/galeria.js') }}"></script>
+{% endblock %}
